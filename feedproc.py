@@ -102,13 +102,14 @@ class FeedProc:
                 link = x.link,
                 description = x.summary,
                 guid = x.link,
-                pubDate = datetime.datetime(
+                pubDate = (datetime.datetime(
                     x.modified_parsed[0],
                     x.modified_parsed[1],
                     x.modified_parsed[2],
                     x.modified_parsed[3],
                     x.modified_parsed[4],
                     x.modified_parsed[5])
+                    if hasattr(x, 'modified_parsed') else None)
                 )
             for x in self.feed['entries']
         ]
