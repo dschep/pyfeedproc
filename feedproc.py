@@ -70,14 +70,23 @@ class FeedProc:
                 element_section, element_name = check_func.groups()
                 
                 if element_section in self.feed.keys():
-                    for feed_item_index in xrange(len(self.feed['entries'])):
-                        feed_item = self.feed['entries'][feed_item_index]
+                    if isinstance(self.feed[element_section], list):
+                        for feed_item_index in xrange(len(self.feed[element_section])):
+                            feed_item = self.feed[element_section][feed_item_index]
+                            orig_element = feed_item[element_name]
+                            
+                            new_element = getattr(self, f_name)(orig_element,
+                                                                feed_item)
+                            self.feed[element_section][feed_item_index][element_name] = new_element
+                        #end for feed_item
+                    else:
+                        feed_item = self.feed[element_section]
                         orig_element = feed_item[element_name]
                         
                         new_element = getattr(self, f_name)(orig_element,
                                                             feed_item)
-                        self.feed['entries'][feed_item_index][element_name] = new_element
-                    #end for feed_item
+                        self.feed[element_section][element_name] = new_element
+
                 else:
                     print "Invalid section %s (in function name %s)" % (
                         element_section, f_name
